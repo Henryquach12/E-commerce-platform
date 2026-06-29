@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 class User(Base):
     __tablename__ = "users"
 
+    # Passed as a callable so a new UUID is generated per row, not once at class load.
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     user_name: Mapped[str] = mapped_column(String(50))
     full_name: Mapped[str] = mapped_column(String(100), nullable=True)
@@ -15,6 +16,7 @@ class User(Base):
     address: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String, unique=True)
     hashed_password: Mapped[str] = mapped_column(String)
+    # Lambda defers evaluation so each new row gets the current UTC time, not the module-load time.
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc))
     is_active: Mapped[bool] = mapped_column(default=True)
